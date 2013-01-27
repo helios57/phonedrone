@@ -1,0 +1,65 @@
+<?xml version='1.0'?>
+<mavlink>
+	<enums>
+		<!-- Camera Mount mode Enumeration -->
+		<enum name="PD_LINE">
+			<description>Enumeration of IN_OUT Linees</description>
+			<entry name="PD_LINE_IN_0" value="0">
+				<description>Line in 0</description>
+			</entry>
+			<entry name="PD_LINE_IN_1" value="1">
+				<description>Line in 1</description>
+			</entry>
+			<entry name="PD_LINE_IN_2" value="2">
+				<description>Line in 2</description>
+			</entry>
+			<entry name="PD_LINE_IN_3" value="3">
+				<description>Line in 3</description>
+			</entry>
+			<entry name="PD_LINE_IN_4" value="4">
+				<description>Line in 4</description>
+			</entry>
+			<entry name="PD_LINE_IN_5" value="5">
+				<description>Line in 5</description>
+			</entry>
+			<entry name="PD_LINE_IN_6" value="6">
+				<description>Line in 6</description>
+			</entry>
+			<entry name="PD_LINE_IN_7" value="7">
+				<description>Line in 7</description>
+			</entry>
+			<entry name="PD_LINE_OUT_0" value="8">
+				<description>Line out 0</description>
+			</entry>
+			<entry name="PD_LINE_OUT_1" value="9">
+				<description>Line out 1</description>
+			</entry>
+			<entry name="PD_LINE_OUT_2" value="10">
+				<description>Line out 2</description>
+			</entry>
+			<entry name="PD_LINE_OUT_3" value="11">
+				<description>Line out 3</description>
+			</entry>
+			<entry name="PD_LINE_OUT_4" value="12">
+				<description>Line out 4</description>
+			</entry>
+			<entry name="PD_LINE_OUT_5" value="13">
+				<description>Line out 5</description>
+			</entry>
+			<entry name="PD_LINE_OUT_6" value="14">
+				<description>Line out 6</description>
+			</entry>
+			<entry name="PD_LINE_OUT_7" value="15">
+				<description>Line out 7</description>
+			</entry>
+		</enum>
+	</enums>
+
+	<messages>
+		<message id="1" name="LINE_VALUE">
+			<description>Offers Information about the Lines</description>
+			<field name="line" type="uint8_t">Whith PD_LINE, line</field>
+			<field name="pmw" type="int16_t">Value of line (PMW)</field>
+		</message>
+	</messages>
+</mavlink>
