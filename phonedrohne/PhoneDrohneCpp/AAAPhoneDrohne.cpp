@@ -21,9 +21,8 @@ int offset0 = 0;
 int offset1 = 0;
 
 int loopCount = 0;
-AndroidAccessory adk("Sharpsoft", "PhoneDrone",
-		"Phone Drone ADK by 3DRobotics", "1.0", "http://www.android.com",
-		"0000000012345678");
+AndroidAccessory adk("Sharpsoft", "PhoneDrone", "Phone Drone ADK by 3DRobotics",
+		"1.0", "http://www.android.com", "0000000012345678");
 
 int firstSensor = 0;    // first analog sensor
 int secondSensor = 0;   // second analog sensor
@@ -46,10 +45,10 @@ void establishContact() {
 
 void setup() {
 	Serial.begin(115200);
-	while (!Serial) {
-		; // wait for serial port to connect. Needed for Leonardo only
-	}
-	establishContact(); // send a byte to establish contact until receiver responds
+//	while (!Serial) {
+//		; // wait for serial port to connect. Needed for Leonardo only
+//	}
+//	establishContact(); // send a byte to establish contact until receiver responds
 
 	digitalWrite(4, LOW); //PG5 por esto
 	pinMode(4, INPUT);
@@ -70,7 +69,15 @@ void setup() {
 
 void loop() {
 
-	if (Serial.read() > 0) {
+	if (Serial.available() > 0) {
+		String readString = Serial.readString();
+		if (readString.startsWith("o")) {
+			Serial.print("Set Output 0 to");
+			int i = readString.substring(1).toInt();
+			Serial.print(i);
+			OutputCh(0, i);
+			Serial.println();
+		}
 		for (int i = 0; i <= 7; i++) {
 			Serial.print("Ch");
 			Serial.print(i);
