@@ -1,4 +1,4 @@
-package ch.sharpsoft.phonedrohnecontroll;
+package ch.sharpsoft.phonedrohnecontrol;
 
 import android.os.Bundle;
 import android.app.Activity;
