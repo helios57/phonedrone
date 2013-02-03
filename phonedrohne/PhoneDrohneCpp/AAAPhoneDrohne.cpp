@@ -15,7 +15,7 @@ long timer = 0;
 AndroidAccessory adk("Sharpsoft", "PhoneDrone", "Phone Drone ADK by 3DRobotics",
 		"1.0", "http://www.android.com", "0000000012345678");
 
-#define BUFFER_LENGTH 2041
+#define BUFFER_LENGTH 4
 uint8_t buf[BUFFER_LENGTH];
 
 uint16_t len;
@@ -65,7 +65,7 @@ void loop() {
 				buffer[2] = (uint8_t) (pmw >> 8);
 				buffer[3] = (uint8_t) pmw;
 				len = 4;
-				uint16_t bytes_sent = adk.write(buffer, len);
+				adk.write(buffer, len);
 			}
 		}
 		int recieved = adk.read(buf, sizeof(buf), 1);

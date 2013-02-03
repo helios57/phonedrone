@@ -1,15 +1,11 @@
 package ch.sharpsoft.phonedrohnecontrol;
 
-import java.io.DataOutputStream;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,18 +16,12 @@ import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.view.Menu;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.TextView;
 
 import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
 
 @SuppressLint("UseSparseArrays")
-public class AttachedActivity extends Activity implements Runnable {
+public class AttachedActivity extends MainActivity implements Runnable {
 	private static final String TAG = "PhoneDrohne";
 
 	private static final String ACTION_USB_PERMISSION = "com.google.android.DemoKit.action.USB_PERMISSION";
@@ -45,10 +35,6 @@ public class AttachedActivity extends Activity implements Runnable {
 	private FileInputStream mInputStream;
 	private FileOutputStream mOutputStream;
 
-	@SuppressLint("UseSparseArrays")
-	private Map<Integer, TextView> pmwTextsIn = new HashMap<Integer, TextView>();
-	private Map<Integer, SeekBar> pmwTextsOut = new HashMap<Integer, SeekBar>();
-	private TextView status;
 	private Handler mHandler = new Handler();
 
 	private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
@@ -109,7 +95,7 @@ public class AttachedActivity extends Activity implements Runnable {
 	public void run() {
 		Log.d(TAG, "run");
 		int ret = 0;
-		byte[] buffer = new byte[512];
+		byte[] buffer = new byte[4];
 
 		while (ret >= 0) {
 			try {
@@ -127,7 +113,7 @@ public class AttachedActivity extends Activity implements Runnable {
 
 							@Override
 							public void run() {
-								if (pmwTextsIn.containsKey(Integer.valueOf(ch))) {
+								if (pmwTextsIn.get(Integer.valueOf(ch)) != null) {
 									pmwTextsIn.get(Integer.valueOf(ch))
 											.setText("" + pmw);
 								}
@@ -152,11 +138,12 @@ public class AttachedActivity extends Activity implements Runnable {
 		Log.d(TAG, "run after reader");
 	}
 
+	@Override
 	public synchronized void sendCommand(byte line, short pmw) {
+		super.sendCommand(line, pmw);
 		Log.d(TAG, "sendCommand");
-		byte[] result;
 		try {
-			result = new byte[4];
+			byte[] result = new byte[4];
 			result[0] = 1;
 			result[1] = line;
 			result[2] = (byte) (pmw >>> 8);
@@ -164,14 +151,6 @@ public class AttachedActivity extends Activity implements Runnable {
 			mOutputStream.write(result);
 			mOutputStream.flush();
 			mOutputStream.getFD().sync();
-
-			if (status.getText().length() > 200) {
-				status.setText("");
-			}
-			final String debug = " ch= " + line + " pmw=" + pmw + " [2]:"
-					+ ((short) (result[2] & 0xFF)) + " [3]:"
-					+ ((short) (result[3] & 0xFF));
-			status.setText(status.getText() + debug);
 		} catch (IOException e) {
 			Log.d(TAG, "sendCommand fail", e);
 		}
@@ -180,66 +159,7 @@ public class AttachedActivity extends Activity implements Runnable {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		Log.d(TAG, "onCreate");
-		ScrollView sc = new ScrollView(this);
-		LinearLayout ll = new LinearLayout(this);
-		ll.setOrientation(LinearLayout.VERTICAL);
-		sc.addView(ll);
-		setContentView(sc);
-		for (int i = 0; i < 8; i++) {
-			LinearLayout in = new LinearLayout(this);
-			in.setOrientation(LinearLayout.HORIZONTAL);
-			TextView tvInLabel = new TextView(this);
-			tvInLabel.setText("Pwm in " + i);
-			TextView tvIn = new TextView(this);
-			tvIn.setText("0000");
-			in.addView(tvInLabel);
-			in.addView(tvIn);
-			ll.addView(in);
-
-			LinearLayout out = new LinearLayout(this);
-			out.setOrientation(LinearLayout.HORIZONTAL);
-			final TextView tvOutLabel = new TextView(this);
-			tvOutLabel.setText("Pwm out " + i);
-			SeekBar tvOut = new SeekBar(this);
-			tvOut.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-					LayoutParams.MATCH_PARENT));
-			out.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-					LayoutParams.MATCH_PARENT));
-			tvOut.setMax(1000);
-			out.addView(tvOutLabel);
-			out.addView(tvOut);
-			ll.addView(out);
-			pmwTextsIn.put(Integer.valueOf(i), tvIn);
-			pmwTextsOut.put(Integer.valueOf(i), tvOut);
-			final byte ch = (byte) i;
-			tvOut.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-				@Override
-				public void onStopTrackingTouch(SeekBar seekBar) {
-
-				}
-
-				@Override
-				public void onStartTrackingTouch(SeekBar seekBar) {
-
-				}
-
-				@Override
-				public void onProgressChanged(SeekBar seekBar, int progress,
-						boolean fromUser) {
-					if (fromUser) {
-						tvOutLabel.setText("Pwm out " + ch + ": "
-								+ (1000 + progress));
-						sendCommand(ch, (short) (1000 + progress));
-					}
-				}
-			});
-		}
-		status = new TextView(this);
-		ll.addView(status);
-
 		mUsbManager = UsbManager.getInstance(this);
 
 		mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(
