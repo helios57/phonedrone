@@ -32,6 +32,10 @@ void setup() {
 	Init_PWM5();      //OUT0&1
 	Init_PPM_PWM4();  //OUT4&5
 	adk.powerOn();
+	//initialize on low level
+	for (int i = 0; i <= 7; i++) {
+		OutputCh(i, 1000);
+	}
 }
 
 void loop() {
