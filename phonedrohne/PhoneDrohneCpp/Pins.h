@@ -7,6 +7,7 @@
 #define PORTK_INPUT(x)  (DDRK  &=  ~(1 << x))
 #define PORTK_READ(x)   (PINK   &   (1 << x))
 
+volatile unsigned int PPM_Counter = 0;
 volatile unsigned int Start_Pulse = 0;
 volatile unsigned int Stop_Pulse = 0;
 volatile unsigned int Pulse_Width = 0;
@@ -134,4 +135,36 @@ void Init_PPM_PWM4(void) {
 
 	TIMSK4 |= (1 << ICIE4); //Timer interrupt mask
 	sei();
+}
+/****************************************************
+  Interrupt Vector
+ ****************************************************/
+ISR(TIMER4_CAPT_vect)//interrupt.
+{
+  if(((1<<ICES4)&TCCR4B) >= 0x01)
+  {
+    if(Start_Pulse>Stop_Pulse) //Checking if the Stop Pulse overflow the register, if yes i normalize it.
+    {
+      Stop_Pulse+=40000; //Nomarlizing the stop pulse.
+    }
+    Pulse_Width=Stop_Pulse-Start_Pulse; //Calculating pulse
+       if(Pulse_Width>5000) //Verify if this is the sync pulse
+       {
+        PPM_Counter=0; //If yes restart the counter
+       }
+       else
+       {
+        PWM_RAW[PPM_Counter]=Pulse_Width; //Saving pulse.
+        PPM_Counter++;
+       }
+    Start_Pulse=ICR4;
+    TCCR4B &=(~(1<<ICES4)); //Changing edge detector.
+  }
+  else
+  {
+    Stop_Pulse=ICR4; //Capturing time stop of the drop edge
+    TCCR4B |=(1<<ICES4); //Changing edge detector.
+    //TCCR4B &=(~(1<<ICES4));
+  }
+  //Counter++;
 }
