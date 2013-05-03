@@ -9,18 +9,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements SensorEventListener {
 	private SensorManager mSensorManager;
-	private Sensor mAccelerometer;
-	private Sensor mMagnetometer;
+	private Sensor mRotation;
 	private Handler handler;
 	private TextView tw;
-	private float[] accel = new float[3];
-	private float[] magnet = new float[3];
-	private float integrationFactor = 0.1f;
+	private float[] rotation = new float[3];
+	private Quaternion leveled = null;
 
 	public MainActivity() {
 
@@ -31,13 +32,23 @@ public class MainActivity extends Activity implements SensorEventListener {
 		super.onCreate(savedInstanceState);
 		handler = new Handler(Looper.getMainLooper());
 		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-		mAccelerometer = mSensorManager
-				.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		mMagnetometer = mSensorManager
-				.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+		mRotation = mSensorManager
+				.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 		final LinearLayout ll = new LinearLayout(this);
-		tw = new TextView(this);
+		ll.setOrientation(LinearLayout.VERTICAL);
+		Button level = new Button(this);
+		level.setText("Level");
+		level.setOnClickListener(new OnClickListener() {
 
+			@Override
+			public void onClick(View v) {
+				float[] quaterion = new float[4];
+				SensorManager.getQuaternionFromVector(quaterion, rotation);
+				leveled = new Quaternion(quaterion);
+			}
+		});
+		ll.addView(level);
+		tw = new TextView(this);
 		ll.addView(tw);
 		setContentView(ll);
 	}
@@ -56,15 +67,9 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 	@Override
 	public void onSensorChanged(final SensorEvent event) {
-		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+		if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
 			for (int i = 0; i < 3; i++) {
-				accel[i] = accel[1] * (1 - integrationFactor) + event.values[i]
-						* integrationFactor;
-			}
-		} else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-			for (int i = 0; i < 3; i++) {
-				magnet[i] = magnet[1] * (1 - integrationFactor)
-						+ event.values[i] * integrationFactor;
+				rotation[i] = event.values[i];
 			}
 		}
 		if (counter++ % 10 == 0) {
@@ -75,53 +80,26 @@ public class MainActivity extends Activity implements SensorEventListener {
 					StringBuilder sb = new StringBuilder();
 					sb.append(counter++);
 					sb.append("\n");
-					sb.append("accel ");
-					for (float f : accel) {
-						sb.append(String.format("%.4f", f)).append(" ");
+					float[] quaterion = new float[4];
+					SensorManager.getQuaternionFromVector(quaterion, rotation);
+					Quaternion current = new Quaternion(quaterion);
+					if (leveled == null){
+						leveled = current;
 					}
+					sb.append("current: ");
+					sb.append(current);
 					sb.append("\n");
-					sb.append("magnet ");
-					for (float f : magnet) {
-						sb.append(String.format("%.4f", f)).append(" ");
-					}
+					
+					sb.append("leveled: ");
+					sb.append(leveled);
 					sb.append("\n");
-					float[] R = new float[16];
-					float[] I = new float[16];
-					SensorManager.getRotationMatrix(R, I, accel, magnet);
-
-					sb.append("R\n");
-					for (int i = 0; i < 4; i++) {
-						sb.append("[");
-						for (int j = 0; j < 4; j++) {
-							sb.append(String.format("%.4f", R[i * 4 + j]))
-									.append(" ");
-						}
-						sb.append("]\n");
-					}
-					sb.append("I\n");
-					for (int i = 0; i < 4; i++) {
-						sb.append("[");
-						for (int j = 0; j < 4; j++) {
-							sb.append(String.format("%.4f", R[i * 4 + j]))
-									.append(" ");
-						}
-						sb.append("]\n");
-					}
-					float[] quaternion = new float[4];
-					SensorManager.getOrientation(R, quaternion);
-
-					sb.append("quaternion ");
-					for (float f : quaternion) {
-						sb.append(String.format("%.4f", f)).append(" ");
-					}
+					
+					Quaternion diff = current.inverse().multiply(leveled);
+					
+					sb.append("diff: ");
+					sb.append(diff);
 					sb.append("\n");
-
-					float inclination = SensorManager.getInclination(I);
-
-					sb.append("inclination ");
-					sb.append(String.format("%.4f", inclination));
-					sb.append("\n");
-
+					
 					tw.setText(sb.toString());
 				}
 			});
@@ -130,9 +108,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 	protected void onResume() {
 		super.onResume();
-		mSensorManager.registerListener(this, mAccelerometer,
-				SensorManager.SENSOR_DELAY_FASTEST);
-		mSensorManager.registerListener(this, mMagnetometer,
+		mSensorManager.registerListener(this, mRotation,
 				SensorManager.SENSOR_DELAY_FASTEST);
 	}
 
