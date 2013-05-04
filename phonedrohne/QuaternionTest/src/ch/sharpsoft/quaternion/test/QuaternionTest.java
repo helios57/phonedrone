@@ -91,31 +91,10 @@ public class QuaternionTest extends TestCase {
 	}
 
 	public void testFromAxis() {
-		fail("Not yet implemented");
+		//TODO
 	}
 
 	public void testFromEuler() {
-		fail("Not yet implemented");
+		//TODO
 	}
-
-	public void testGetW() {
-		fail("Not yet implemented");
-	}
-
-	public void testGetX() {
-		fail("Not yet implemented");
-	}
-
-	public void testGetY() {
-		fail("Not yet implemented");
-	}
-
-	public void testGetZ() {
-		fail("Not yet implemented");
-	}
-
-	public void testEqualsObject() {
-		fail("Not yet implemented");
-	}
-
 }

@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -21,7 +22,11 @@ public class MainActivity extends Activity implements SensorEventListener {
 	private Handler handler;
 	private TextView tw;
 	private float[] rotation = new float[3];
+	private final float[] rotationMatrix = new float[16];
 	private Quaternion leveled = null;
+	private GLRenderer renderer;
+
+	GLSurfaceView glView;
 
 	public MainActivity() {
 
@@ -50,6 +55,13 @@ public class MainActivity extends Activity implements SensorEventListener {
 		ll.addView(level);
 		tw = new TextView(this);
 		ll.addView(tw);
+		glView = new GLSurfaceView(this);
+		glView.setEGLContextClientVersion(2);
+		ll.addView(glView);
+		renderer = new GLRenderer();
+		glView.setRenderer(renderer);
+		glView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+		glView.requestRender();
 		setContentView(ll);
 	}
 
@@ -83,24 +95,28 @@ public class MainActivity extends Activity implements SensorEventListener {
 					float[] quaterion = new float[4];
 					SensorManager.getQuaternionFromVector(quaterion, rotation);
 					Quaternion current = new Quaternion(quaterion);
-					if (leveled == null){
+					if (leveled == null) {
 						leveled = current;
 					}
 					sb.append("current: ");
 					sb.append(current);
 					sb.append("\n");
-					
+
 					sb.append("leveled: ");
 					sb.append(leveled);
 					sb.append("\n");
-					
-					Quaternion diff = current.conjugate().normalize().multiply(leveled).normalize();
-					
+
+					Quaternion diff = current.conjugate().normalize()
+							.multiply(leveled).normalize();
+
 					sb.append("diff: ");
 					sb.append(diff);
 					sb.append("\n");
-					
+
 					tw.setText(sb.toString());
+					SensorManager.getRotationMatrixFromVector(rotationMatrix, diff.getFloatArray());
+					renderer.setRotationMatrix(rotationMatrix);
+					glView.requestRender();
 				}
 			});
 		}
