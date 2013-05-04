@@ -24,7 +24,7 @@ public class Quaternion {
 		return Math.sqrt(w * w + x * x + y * y + z * z);
 	}
 
-	private Quaternion normalize() {
+	public Quaternion normalize() {
 		final double norm = norm();
 		return new Quaternion((float)(w/norm),(float)(x/norm),(float)(y/norm),(float)(z/norm));
 	}
@@ -44,24 +44,11 @@ public class Quaternion {
 		float z0 = w * b.z + x * b.y - y * b.x + z * b.w;
 		return new Quaternion(w0, x0, y0, z0);
 	}
-
-	// return a new Quaternion whose value is the inverse of this
-	public Quaternion inverse() {
-		float d = w * w + x * x + y * y + z * z;
-		return new Quaternion(w / d, -x / d, -y / d, -z / d);
-	}
-
-	// return a / b
-	public Quaternion divides(Quaternion b) {
-		return this.inverse().multiply(b);
-	}
 	
 	public Vector3 multiply(final Vector3 vec)
 	{
-		Vector3 vn = vec.normalize();
-		Quaternion vecQuat = new Quaternion(0.0f,vn.getX(),vn.getY(),vn.getZ());
-		Quaternion resQuat = vecQuat.multiply(conjugate());
-		resQuat = multiply(resQuat);
+		Quaternion vecQuat = new Quaternion(0.0f,vec.getX(),vec.getY(),vec.getZ());
+		Quaternion resQuat = multiply(vecQuat).multiply(conjugate());
 		return (new Vector3(resQuat.x, resQuat.y, resQuat.z));
 	}
 	

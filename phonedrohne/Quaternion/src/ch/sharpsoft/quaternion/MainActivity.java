@@ -94,7 +94,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 					sb.append(leveled);
 					sb.append("\n");
 					
-					Quaternion diff = current.inverse().multiply(leveled);
+					Quaternion diff = current.conjugate().normalize().multiply(leveled).normalize();
 					
 					sb.append("diff: ");
 					sb.append(diff);
