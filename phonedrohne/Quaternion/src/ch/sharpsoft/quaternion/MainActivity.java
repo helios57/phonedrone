@@ -22,7 +22,6 @@ public class MainActivity extends Activity implements SensorEventListener {
 	private Handler handler;
 	private TextView tw;
 	private float[] rotation = new float[3];
-	private final float[] rotationMatrix = new float[16];
 	private Quaternion leveled = null;
 	private GLRenderer renderer;
 
@@ -114,8 +113,8 @@ public class MainActivity extends Activity implements SensorEventListener {
 					sb.append("\n");
 
 					tw.setText(sb.toString());
-					SensorManager.getRotationMatrixFromVector(rotationMatrix, diff.getFloatArray());
-					renderer.setRotationMatrix(rotationMatrix);
+
+					renderer.setRotationQuaternion(diff);
 					glView.requestRender();
 				}
 			});

@@ -155,6 +155,10 @@ public class Quaternion {
 
 	public float[] getFloatArray() {
 		return new float[]{w,x,y,z};
+	}	
+	
+	public float[] getFloatArrayXYZW() {
+		return new float[]{x,y,z,w};
 	}
 
 }

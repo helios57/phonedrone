@@ -3,6 +3,7 @@ package ch.sharpsoft.quaternion;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.hardware.SensorManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -19,37 +20,37 @@ public class GLRenderer implements GLSurfaceView.Renderer {
 
 	private int mProgram;
 
-    private final float[] mMVPMatrix = new float[16];
-    private final float[] mProjMatrix = new float[16];
-    private final float[] mVMatrix = new float[16];
-    private final float[] mRotationMatrix = new float[16];
+	private final float[] mMVPMatrix = new float[16];
+	private final float[] mProjMatrix = new float[16];
+	private final float[] mVMatrix = new float[16];
+	private final float[] mRotationMatrix = new float[16];
 
-    // Declare as volatile because we are updating it from another thread
-    public volatile float mAngle;
-    
+	// Declare as volatile because we are updating it from another thread
+	public volatile float mAngle;
+
 	@Override
 	public void onDrawFrame(GL10 gl) { // Draw background color
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-		
+
 		// Calculate the projection and view transformation
 		Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
-		
+
 		// Set the camera position (View matrix)
-		Matrix.setLookAtM(mVMatrix, 0, 0, 0, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
-		
-//		Matrix.setRotateM(mRotationMatrix, 0, 10, 0, 0, -1.0f);
-		
-		Matrix.multiplyMM(mMVPMatrix, 0, mRotationMatrix, 0, mMVPMatrix,0);
+		Matrix.setLookAtM(mVMatrix, 0, 0, 0, -4, 0f, 0f, 0f, 0f, 1f, 0f);
+
+		// Matrix.setRotateM(mRotationMatrix, 0, 10, 0, 0, -1.0f);
+
+		Matrix.multiplyMM(mMVPMatrix, 0, mRotationMatrix, 0, mMVPMatrix, 0);
 
 		// Draw square
 		square.draw(mMVPMatrix);
 	}
 
-	public void setRotationMatrix(float[] m44){
-		for(int i = 0;i<16;i++){
-			mRotationMatrix[i] = m44[i];
-		}
+	public void setRotationQuaternion(Quaternion q) {
+		SensorManager.getRotationMatrixFromVector(mRotationMatrix,
+				q.getFloatArrayXYZW());
 	}
+
 	@Override
 	public void onSurfaceChanged(GL10 unused, int width, int height) {
 		// Adjust the viewport based on geometry changes,
