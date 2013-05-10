@@ -148,7 +148,7 @@ public class Quaternion {
 
 	@Override
 	public String toString() {
-		return "Quaternion [w=" + String.format("%.4f", w) + ", x="
+		return "Q [w=" + String.format("%.4f", w) + ", x="
 				+ String.format("%.4f", x) + ", y=" + String.format("%.4f", y)
 				+ ", z=" + String.format("%.4f", z) + "]";
 	}

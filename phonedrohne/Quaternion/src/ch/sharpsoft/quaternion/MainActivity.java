@@ -24,6 +24,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 	private float[] rotation = new float[3];
 	private Quaternion leveled = null;
 	private GLRenderer renderer;
+	private MotorPositions motorPositions = new MotorPositions();
 
 	GLSurfaceView glView;
 
@@ -111,7 +112,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 					sb.append("diff: ");
 					sb.append(diff);
 					sb.append("\n");
-
+					sb.append(motorPositions.getCalculatedThrust(diff));
 					tw.setText(sb.toString());
 
 					renderer.setRotationQuaternion(diff);

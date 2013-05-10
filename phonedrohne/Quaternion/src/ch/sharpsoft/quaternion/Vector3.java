@@ -19,6 +19,9 @@ public class Vector3 {
 				(float) (z / norm));
 	}
 
+	public Vector3 substract(Vector3 minus){
+		return new Vector3(this.x-minus.x, this.y-minus.y,this.z-minus.z);
+	}
 	public float getX() {
 		return x;
 	}
@@ -61,6 +64,6 @@ public class Vector3 {
 
 	@Override
 	public String toString() {
-		return "Vector3 [x=" + x + ", y=" + y + ", z=" + z + "]";
+		return "V [x=" + x + ", y=" + y + ", z=" + z + "]";
 	}
 }
