@@ -58,7 +58,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 		glView = new GLSurfaceView(this);
 		glView.setEGLContextClientVersion(2);
 		ll.addView(glView);
-		renderer = new GLRenderer();
+		renderer = new GLRenderer(this);
 		glView.setRenderer(renderer);
 		glView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 		glView.requestRender();
@@ -114,7 +114,6 @@ public class MainActivity extends Activity implements SensorEventListener {
 					sb.append("\n");
 					sb.append(motorPositions.getCalculatedThrust(diff));
 					tw.setText(sb.toString());
-
 					renderer.setRotationQuaternion(diff);
 					glView.requestRender();
 				}
