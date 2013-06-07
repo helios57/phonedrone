@@ -1,7 +1,7 @@
 package ch.sharpsoft.quaternion.test;
 
-import ch.sharpsoft.quaternion.Quaternion;
-import ch.sharpsoft.quaternion.Vector3;
+import ch.sharpsoft.quaternion.util.Quaternion;
+import ch.sharpsoft.quaternion.v1.Vector3;
 import junit.framework.TestCase;
 
 public class QuaternionTest extends TestCase {

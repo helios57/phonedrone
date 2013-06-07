@@ -1,4 +1,4 @@
-package ch.sharpsoft.quaternion;
+package ch.sharpsoft.quaternion.v1;
 
 import android.opengl.GLES20;
 import android.util.Log;

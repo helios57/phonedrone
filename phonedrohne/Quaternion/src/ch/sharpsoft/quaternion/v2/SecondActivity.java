@@ -1,11 +1,16 @@
-package ch.sharpsoft.quaternion;
+package ch.sharpsoft.quaternion.v2;
 
+import rajawali.renderer.RajawaliRenderer;
+import ch.sharpsoft.quaternion.util.MotorPositions;
+import ch.sharpsoft.quaternion.util.Quaternion;
+import ch.sharpsoft.quaternion.v1.GLRenderer;
 import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
+import android.opengl.GLSurfaceView.Renderer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -16,21 +21,23 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements SensorEventListener {
+/**
+ * Uses https://github.com/MasDennis/Rajawali.git as 3D-Library
+ * 
+ * @author Helios
+ * 
+ */
+public class SecondActivity extends Activity implements SensorEventListener {
 	private SensorManager mSensorManager;
 	private Sensor mRotation;
 	private Handler handler;
 	private TextView tw;
 	private float[] rotation = new float[3];
 	private Quaternion leveled = null;
-	private GLRenderer renderer;
+	private RajawaliLoadModelRenderer renderer;
 	private MotorPositions motorPositions = new MotorPositions();
 
 	GLSurfaceView glView;
-
-	public MainActivity() {
-
-	}
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -58,11 +65,12 @@ public class MainActivity extends Activity implements SensorEventListener {
 		glView = new GLSurfaceView(this);
 		glView.setEGLContextClientVersion(2);
 		ll.addView(glView);
-		renderer = new GLRenderer(this);
+		renderer = new RajawaliLoadModelRenderer(this);
 		glView.setRenderer(renderer);
 		glView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 		glView.requestRender();
 		setContentView(ll);
+		((RajawaliRenderer) renderer).setSurfaceView(glView);
 	}
 
 	@Override
@@ -114,7 +122,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 					sb.append("\n");
 					sb.append(motorPositions.getCalculatedThrust(diff));
 					tw.setText(sb.toString());
-					renderer.setRotationQuaternion(diff);
+					renderer.setRotation(diff);
 					glView.requestRender();
 				}
 			});

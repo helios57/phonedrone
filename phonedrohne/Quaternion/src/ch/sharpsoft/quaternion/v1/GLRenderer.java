@@ -1,8 +1,12 @@
-package ch.sharpsoft.quaternion;
+package ch.sharpsoft.quaternion.v1;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import ch.sharpsoft.quaternion.R;
+import ch.sharpsoft.quaternion.R.drawable;
+import ch.sharpsoft.quaternion.R.raw;
+import ch.sharpsoft.quaternion.util.Quaternion;
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.opengl.GLES20;

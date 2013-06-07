@@ -1,7 +1,9 @@
-package ch.sharpsoft.quaternion;
+package ch.sharpsoft.quaternion.util;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import ch.sharpsoft.quaternion.v1.Vector3;
 
 public class MotorPositions {
 

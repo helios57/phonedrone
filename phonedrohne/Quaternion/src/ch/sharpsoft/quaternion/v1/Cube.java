@@ -1,4 +1,4 @@
-package ch.sharpsoft.quaternion;
+package ch.sharpsoft.quaternion.v1;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

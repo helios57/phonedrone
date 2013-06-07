@@ -1,4 +1,4 @@
-package ch.sharpsoft.quaternion;
+package ch.sharpsoft.quaternion.v1;
 
 import java.io.BufferedReader;
 import java.io.IOException;

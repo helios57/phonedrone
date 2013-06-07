@@ -1,4 +1,4 @@
-package ch.sharpsoft.quaternion;
+package ch.sharpsoft.quaternion.v1;
 
 public class Vector3 {
 	private final float x, y, z;

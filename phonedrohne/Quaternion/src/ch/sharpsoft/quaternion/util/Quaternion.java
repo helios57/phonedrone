@@ -1,4 +1,6 @@
-package ch.sharpsoft.quaternion;
+package ch.sharpsoft.quaternion.util;
+
+import ch.sharpsoft.quaternion.v1.Vector3;
 
 public class Quaternion {
 
