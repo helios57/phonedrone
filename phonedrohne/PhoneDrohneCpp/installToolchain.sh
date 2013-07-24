@@ -1,4 +1,4 @@
-sudo apt-get -y install build-essential cvs git subversion mercurial texinfo flex bison automake python-serial python-argparse openocd libncurses5-dev autoconf texinfo libftdi-dev libtool zlib1g-dev genromfs ia32-libs git-core wget
+sudo apt-get -y install build-essential cvs git subversion cmake mercurial texinfo flex bison automake python-serial python-argparse openocd libncurses5-dev autoconf texinfo libftdi-dev libtool zlib1g-dev genromfs ia32-libs git-core wget
 sudo mkdir /tmp/ramdisk; chmod 777 /tmp/ramdisk
 sudo mount -t tmpfs -o size=4G tmpfs /tmp/ramdisk/
 cd /tmp/ramdisk
